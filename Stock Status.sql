@@ -14,6 +14,7 @@ WITH daily AS(
 			"date", 
 			store_id,
 			product_id),
+/* Used to calculate only the days that stores were open.*/
 	days_open AS (
 		SELECT 
 			store_id, 
@@ -22,6 +23,8 @@ WITH daily AS(
 			sales 
 		GROUP BY 
 			store_id),
+/*The randomness of store open dates led to bad data when calculated grouped by 
+	weeks. Daily averages multiplied by 7 is used as a replacement. */
 	weekly AS (
 		SELECT 
 			daily.store_id AS store_id,
