@@ -31,10 +31,10 @@ INNER JOIN
 	store_profits
 	ON
 	stores.store_id = store_profits.store_id
--- To Filter WHERE store_location = 'LOCATION TYPE' AND product_category = 'CATEGORY'
+-- To Filter  WHERE store_location = 'LOCATION TYPE' AND product_category = 'CATEGORY'
 GROUP BY 
 	store_name,
 	product_name
 ORDER BY 
-	store_name,
-	product_name;
+	product_name,
+	store_name;

@@ -1,3 +1,5 @@
+-- To filter by location type, remove undesired locations from SELECT
+-- Or place location type in WHERE statement
 SELECT
 	"Product",
 	"Airport",
@@ -19,6 +21,9 @@ FROM crosstab(
 		products
 		ON
 		sales.product_id = products.product_id
+	-- Filter by Category
+	/*WHERE 
+		product_category = 'CATEGORY'*/
 	GROUP BY 
 		store_location,
 		product_name
