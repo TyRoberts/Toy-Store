@@ -1,6 +1,4 @@
-SELECT 
-	EXTRACT (year FROM "date") AS "year",
-	EXTRACT (month FROM "date") AS "month",
+SELECT
 	store_name,
 	product_name, 
 	CAST(SUM(product_price * units) AS money) AS revenue
@@ -15,11 +13,8 @@ INNER JOIN
 	ON 
 	sales.store_id = stores.store_id
 GROUP BY 
-	"year",
-	"month", 
-	CUBE(store_name,product_name)
-ORDER BY 
 	store_name,
-	"year",
-	"month",
-	product_name;
+	product_name
+ORDER BY 
+	product_name,
+	revenue DESC;

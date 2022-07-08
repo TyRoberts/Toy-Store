@@ -1,8 +1,7 @@
 WITH transactions AS (
 		SELECT 
 			store_name,
-			DATE_PART('quarter',"date") AS "quarter", 
-			DATE_PART('year',"date") AS "year", 
+			DATE_TRUNC('month', "date") AS "month",
 			COUNT(sale_id) AS total 
 		FROM 
 			sales 
@@ -12,32 +11,30 @@ WITH transactions AS (
 			sales.store_id = stores.store_id
 		GROUP BY 
 			store_name,
-			"quarter",
-			"year"),
+			"month"),
 	"rank" AS(
 		SELECT 
 		store_name,
-		"year", 
-		"quarter", 
 		SUM(total) AS total_transactions,
-		RANK() OVER(PARTITION BY "quarter", "year" ORDER BY SUM(total) DESC)
+		RANK() OVER(ORDER BY SUM(total) DESC)
 	FROM 
 		transactions
 	GROUP BY 
-		store_name,
-		"year",
-		"quarter")
+		store_name)
 
 SELECT 
-	store_name, 
-	"year", 
-	"quarter", 
-	total_transactions
+	transactions.store_name, 
+	TO_CHAR("month", 'Mon-YY') AS "month", 
+	total
 FROM
 	"rank"
+INNER JOIN
+	transactions
+	ON
+	"rank".store_name = transactions.store_name
 WHERE
 	rank <=3
 ORDER BY 
-	"year", 
-	"quarter", 
+	transactions.store_name,
+	transactions.month, 
 	rank;

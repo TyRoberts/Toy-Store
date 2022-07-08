@@ -9,10 +9,6 @@ WITH daily AS(
 		GROUP BY 
 			"date",
 			store_id,
-			product_id
-		ORDER BY 
-			"date", 
-			store_id,
 			product_id),
 /* Used to calculate only the days that stores were open.*/
 	days_open AS (
@@ -27,7 +23,7 @@ WITH daily AS(
 	weeks. Daily averages multiplied by 7 is used as a replacement. */
 	weekly AS (
 		SELECT 
-			daily.store_id AS store_id,
+			daily.store_id,
 			product_id, 
 			ROUND(((SUM(units_sold))/MAX(days_open.num)*7),2) AS avg_weekly_units
 		FROM 
@@ -38,9 +34,6 @@ WITH daily AS(
 			daily.store_id = days_open.store_id
 		GROUP BY
 			daily.store_id,
-			product_id
-		ORDER BY 
-			daily.store_id, 
 			product_id),
 /* If stock is less than average weekly units sold the store needs to order more. 
 	To ensure stores are adequately stocked and to limit the number of deliveries, 
@@ -50,15 +43,14 @@ WITH daily AS(
 		SELECT 
 			weekly.store_id,
 			weekly.product_id,
-			CASE WHEN 
-			CEIL(SUM(avg_weekly_units - stock_on_hand))>0 
-			AND 
-			CEIL(SUM(avg_weekly_units - stock_on_hand))< 5 
-			THEN 5 
-			WHEN 
-			CEIL(SUM(avg_weekly_units - stock_on_hand)) >= 5 
-			THEN CEIL(SUM(avg_weekly_units * 2 - stock_on_hand))
-			ELSE 0 
+			CASE 
+				WHEN CEIL(SUM(avg_weekly_units - stock_on_hand))>0 
+				AND 
+				CEIL(SUM(avg_weekly_units - stock_on_hand))< 5 
+				THEN 5 
+				WHEN CEIL(SUM(avg_weekly_units - stock_on_hand)) >= 5 
+				THEN CEIL(SUM(avg_weekly_units * 2 - stock_on_hand))
+				ELSE 0 
 			END AS num
 		FROM
 			weekly
@@ -71,13 +63,15 @@ WITH daily AS(
 		GROUP BY 
 			weekly.store_id,
 			weekly.product_id)
-			
-SELECT 
-	store_name, 
-	product_name, 
-	SUM(stock_on_hand) AS stock_on_hand,
-	SUM(num) AS order_amount
-FROM 
+
+--Store name is not selected because query is based on one store chosen in the WHERE statement.
+--Aguascalientes 1 is used for example purposes throught Store Overview queries.
+SELECT
+	product_name AS "Product Name",
+	SUM(stock_on_hand) AS "Stock on Hand",
+	ROUND(SUM(avg_weekly_units)) AS "Weekly Units Sold",
+	SUM(num) AS "Order Amount"
+FROM
 	weekly
 INNER JOIN
 	stores 
@@ -99,9 +93,9 @@ INNER JOIN
 	inventory.store_id = order_amount.store_id
 	AND
 	inventory.product_id = order_amount.product_id
+WHERE 
+	store_name = 'Maven Toys Aguascalientes 1' -- Select store here
 GROUP BY 
-	store_name, 
 	product_name
 ORDER BY 
-	store_name, 
-	stock_on_hand DESC;
+	product_name;

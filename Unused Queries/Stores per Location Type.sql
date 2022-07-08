@@ -6,4 +6,4 @@ FROM
 GROUP BY 
 	store_location
 ORDER BY
-	num_of_stores DESC;
+	num_of_stores;

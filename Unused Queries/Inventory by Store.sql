@@ -16,5 +16,5 @@ GROUP BY
 	store_name, 
 	product_name
 ORDER BY 
-	product_name, 
-	store_name;
+	store_name, 
+	product_name;

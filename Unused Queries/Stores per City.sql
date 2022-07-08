@@ -10,4 +10,5 @@ FROM
 GROUP BY 
 	ROLLUP(store_city)
 ORDER BY 
-	num_of_stores DESC;
+	num_of_stores DESC,
+	store_city;

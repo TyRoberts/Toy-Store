@@ -1,8 +1,7 @@
 WITH category AS(
 		SELECT 
 			store_id, 
-			product_category, 
-			DATE_TRUNC('month', "date") AS "month", 
+			product_category,
 			SUM(units) AS totalUnits 
 		FROM
 			sales
@@ -12,14 +11,12 @@ WITH category AS(
 			sales.product_id = products.product_id
 		GROUP BY 
 			store_id, 
-			product_category,
-			"month"), 
+			product_category), 
 	per_product AS(
 		SELECT 
 			store_id, 
 			sales.product_id, 
-			product_category, 
-			DATE_TRUNC('month', "date") AS "month",
+			product_category,
 			SUM(units) AS totalUnits
 		FROM 
 			sales
@@ -30,12 +27,10 @@ WITH category AS(
 		GROUP BY 
 			store_id,
 			sales.product_id,
-			"month",
 			product_category)
 		
 SELECT 
 	store_name,
-	TO_CHAR(per_product.month, 'MM-YYYY') AS "month",
 	products.product_category, 
 	product_name,
 	per_product.totalUnits AS units_sold,
@@ -45,9 +40,7 @@ FROM
 INNER JOIN 
 	category
 	ON
-	per_product.store_id = category.store_id 
-	AND 
-	per_product.month = category.month
+	per_product.store_id = category.store_id
 	AND 
 	per_product.product_category = category.product_category
 INNER JOIN 
@@ -59,6 +52,6 @@ INNER JOIN
 	ON
 	per_product.product_id = products.product_id
 ORDER BY 
-	store_name, 
-	"month", 
-	products.product_category;
+	store_name,
+	products.product_category,
+	product_name;

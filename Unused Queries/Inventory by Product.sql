@@ -1,7 +1,7 @@
 SELECT 
 	CASE WHEN 
 		product_name IS NULL 
-		THEN 'All' 
+		THEN '*All' 
 		ELSE product_name 
 	END,
 	SUM(stock_on_hand) AS stock 
@@ -14,4 +14,4 @@ INNER JOIN
 GROUP BY 
 	ROLLUP(product_name)
 ORDER BY 
-	stock DESC;
+	product_name;
